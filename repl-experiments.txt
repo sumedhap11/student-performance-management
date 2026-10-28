@@ -1,0 +1,146 @@
+=====================================================================
+ REPL EXPERIMENTS - Student Performance Management System
+ Assignment 6 (Advanced JavaScript and Node.js)
+ Environment: Node.js v22.22.0  |  Started with: node -i
+=====================================================================
+
+Before writing the application, the following expressions were
+tested in the Node.js REPL. The outputs shown below are the actual
+responses printed by the REPL.
+
+Note: in the transcript "undefined" is printed after every
+declaration (const/let statements do not return a value), and the
+REPL prints strings inside single quotes.
+
+
+=====================================================================
+ EXPERIMENT 1: Grade calculation expressions
+=====================================================================
+
+> const grade = (avg) => avg >= 90 ? "A+" : avg >= 80 ? "A" : avg >= 70 ? "B" : avg >= 60 ? "C" : avg >= 50 ? "D" : "F";
+undefined
+
+> grade(90.67)
+'A+'
+
+> grade(78.33)
+'B'
+
+> grade(48.33)
+'F'
+
+Explanation: a nested ternary operator checks the average against the
+grading scale from top (90 -> A+) to bottom (below 50 -> F). The
+average 90.67 of the assignment's example student Aarav gives "A+".
+This confirmed the scale before writing Student.getGrade() with a
+GRADE_SCALE array inside src/student.js.
+
+
+=====================================================================
+ EXPERIMENT 2: Array filtering and sorting
+=====================================================================
+
+> const students = [ { id: 101, name: "Aarav", average: 90.67 }, { id: 102, name: "Vivaan", average: 71.67 }, { id: 103, name: "Saanvi", average: 88.67 } ];
+undefined
+
+> students.filter((s) => s.average >= 80).map((s) => s.name)
+[ 'Aarav', 'Saanvi' ]
+
+> [...students].sort((a, b) => b.average - a.average).map((s) => s.name)
+[ 'Aarav', 'Saanvi', 'Vivaan' ]
+
+Explanation: filter() keeps only the students with average 80 or
+more, and map() picks just the names. sort() with a comparator
+(b.average - a.average) sorts highest average first. The spread
+syntax [...students] was used so sort() works on a copy and the
+original array order is not destroyed. These became
+filterByGrade() and sortByAverage() in src/studentService.js.
+
+Total marks and average were also calculated for the example
+student from the assignment:
+
+> const total = Object.values(student.marks).reduce((sum, m) => sum + m, 0);
+undefined
+
+> total
+272
+
+> (total / Object.keys(student.marks).length).toFixed(2)
+'90.67'
+
+
+=====================================================================
+ EXPERIMENT 3: Destructuring student objects
+=====================================================================
+
+> const student = { id: 101, name: "Aarav", marks: { mathematics: 85, science: 91, programming: 96 } };
+undefined
+
+> const { id, name, marks: { mathematics } } = student;
+undefined
+
+> `${id} -> ${name} -> mathematics: ${mathematics}`
+'101 -> Aarav -> mathematics: 85'
+
+Explanation: destructuring pulls id and name out of the object, and
+marks: { mathematics } digs one level deeper to extract a single
+subject mark. This is exactly the pattern used in the Student
+constructor (src/student.js) and in the "search" command of
+src/main.js.
+
+
+=====================================================================
+ EXPERIMENT 4: Arrow functions and template literals
+=====================================================================
+
+> const add = (a, b) => a + b;
+undefined
+
+> add(85, 91)
+176
+
+> const subject = "science"; const mark = 91;
+undefined
+
+> `Aarav scored ${mark} in ${subject}`
+'Aarav scored 91 in science'
+
+Explanation: the concise arrow function add() was the first step
+toward the reduce() based total calculation. The template literal
+interpolates variables directly into a sentence - the same
+formatting style used for the performance report and every console
+message in src/main.js.
+
+
+=====================================================================
+ EXPERIMENT 5: Error handling with invalid values
+=====================================================================
+
+> Number("abc")
+NaN
+
+> parseInt("")
+NaN
+
+> isNaN(Number("91marks"))
+true
+
+> try { JSON.parse("{ name: Aarav }") } catch (e) { `Caught error: ${e.message}` }
+'Caught error: Expected property name or '}' in JSON at position 2 (line 1 column 3)'
+
+> -5 >= 0 && -5 <= 100
+false
+
+> 105 >= 0 && 105 <= 100
+false
+
+Explanation: invalid numbers become NaN, so isNaN() can reject typed
+input such as "91marks". Malformed JSON throws an error that must
+be caught with try/catch - the same approach used in
+loadStudents(). The comparisons show why marks are validated with
+mark >= 0 && mark <= 100: both -5 and 105 are rejected. These
+checks became src/validation.js.
+
+=====================================================================
+ End of REPL experiments
+=====================================================================
